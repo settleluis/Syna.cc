@@ -1,0 +1,5 @@
+{
+  "/(default)/page": "app/(default)/page.js",
+  "/(features)/premium/page": "app/(features)/premium/page.js",
+  "/(features)/features/page": "app/(features)/features/page.js"
+}
