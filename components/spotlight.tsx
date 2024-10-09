@@ -16,58 +16,49 @@ export default function Spotlight({
   const mousePosition = useMousePosition();
   const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const containerSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
-  const [boxes, setBoxes] = useState<Array<HTMLElement>>([]);
+  const [boxes, setBoxes] = useState<HTMLElement[]>([]);
 
   useEffect(() => {
-    containerRef.current &&
-      setBoxes(
-        Array.from(containerRef.current.children).map(
-          (el) => el as HTMLElement,
-        ),
-      );
-  }, []);
+    const initContainer = () => {
+      if (containerRef.current) {
+        containerSize.current.w = containerRef.current.offsetWidth;
+        containerSize.current.h = containerRef.current.offsetHeight;
+        setBoxes(Array.from(containerRef.current.children).map(el => el as HTMLElement));
+      }
+    };
 
-  useEffect(() => {
     initContainer();
     window.addEventListener("resize", initContainer);
 
     return () => {
       window.removeEventListener("resize", initContainer);
     };
-  }, [boxes]);
+  }, []);
 
   useEffect(() => {
-    onMouseMove();
-  }, [mousePosition]);
+    const handleMouseMove = () => {
+      if (containerRef.current && boxes.length > 0) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const { w, h } = containerSize.current;
+        const x = mousePosition.x - rect.left;
+        const y = mousePosition.y - rect.top;
+        if (x >= 0 && x <= w && y >= 0 && y <= h) {
+          mouse.current.x = x;
+          mouse.current.y = y;
 
-  const initContainer = () => {
-    if (containerRef.current) {
-      containerSize.current.w = containerRef.current.offsetWidth;
-      containerSize.current.h = containerRef.current.offsetHeight;
-    }
-  };
-
-  const onMouseMove = () => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const { w, h } = containerSize.current;
-      const x = mousePosition.x - rect.left;
-      const y = mousePosition.y - rect.top;
-      const inside = x < w && x > 0 && y < h && y > 0;
-      if (inside) {
-        mouse.current.x = x;
-        mouse.current.y = y;
-        boxes.forEach((box) => {
-          const boxX =
-            -(box.getBoundingClientRect().left - rect.left) + mouse.current.x;
-          const boxY =
-            -(box.getBoundingClientRect().top - rect.top) + mouse.current.y;
-          box.style.setProperty("--mouse-x", `${boxX}px`);
-          box.style.setProperty("--mouse-y", `${boxY}px`);
-        });
+          boxes.forEach((box) => {
+            const boxRect = box.getBoundingClientRect();
+            const boxX = -(boxRect.left - rect.left) + mouse.current.x;
+            const boxY = -(boxRect.top - rect.top) + mouse.current.y;
+            box.style.setProperty("--mouse-x", `${boxX}px`);
+            box.style.setProperty("--mouse-y", `${boxY}px`);
+          });
+        }
       }
-    }
-  };
+    };
+
+    handleMouseMove(); // Initial mouse position update
+  }, [mousePosition, boxes]);
 
   return (
     <div className={className} ref={containerRef}>
