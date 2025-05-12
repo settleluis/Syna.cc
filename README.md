@@ -2,7 +2,7 @@
 
 Welcome to the official repository for **Syna.cc** – a modern, sleek, and feature-rich **Self-Bot** designed with complete **UI customization**, **theme flexibility**, and more!
 
-> ⚠️ **Disclaimer**: This project is intended for educational and personal use only. Using self-bots on platforms like Discord is against their Terms of Service and can result in account termination. Use at your own risk.
+> ⚠️ **Disclaimer**: This project is intended for educational and personal use only.
 
 ---
 
